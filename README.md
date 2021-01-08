@@ -5,7 +5,7 @@ Uses the [jQuery Mouse Wheel](https://github.com/jquery/jquery-mousewheel) opens
 
 Controls:
 
-Click and Drag - rotate model
+Click and Drag - rotate model,
 Mouse Wheel - move camera forward and backwards
 
 <img src="https://media.giphy.com/media/3gP97wmjMrR29181rG/giphy.gif" width="600"/>
