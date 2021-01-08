@@ -1,5 +1,6 @@
 # 3dEngine
-Displays 3D objects as wireframe on a HTML canvas, can open .obj files
+Program written in JavaScript that displays 3D objects as a wireframe on a HTML canvas. 
+Can open .obj files
 
 Uses the [jQuery Mouse Wheel](https://github.com/jquery/jquery-mousewheel) opensource plugin
 
