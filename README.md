@@ -2,7 +2,7 @@
 Program written in JavaScript that displays 3D objects as a wireframe on a HTML canvas. 
 Can open .obj files
 
-Uses the [jQuery Mouse Wheel](https://github.com/jquery/jquery-mousewheel) opensource plugin
+Uses [jQuery Mouse Wheel Plugin](https://github.com/jquery/jquery-mousewheel)
 
 Controls:
 
