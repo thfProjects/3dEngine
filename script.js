@@ -4,13 +4,18 @@ var o;
 $(document).ready(function(){
     
     var canvas = document.getElementById("myCanvas");
-    var ctx = canvas.getContext("2d");
+    var context = canvas.getContext("2d");
+    
+    initializeOffscreenCanvas(canvas.width, canvas.height);
     
     var camera = new Camera(0, 0, -3, 0, 0, 0, 90, 1);
     
     o = createCube();
     
-    draw(canvas, camera, o);
+    //draw(canvas, camera, o);
+    window.requestAnimationFrame(function(timestamp){
+        draw(canvas, camera, o);
+    });
     
     var lastmousex = 0; 
     var lastmousey = 0;
@@ -32,29 +37,29 @@ $(document).ready(function(){
             for(i = 0; i < o.v.length; i++){
                 rotate(o.v[i], y/2, x/2, 0);
             }
-            draw(canvas, camera, o);
+            //draw(canvas, camera, o);
         }
 
         
         lastmousex = event.pageX;
         lastmousey = event.pageY;
         
-        if(showingvInfo){
+        /*if(showingvInfo){
             draw(canvas, camera, o);
             showingvInfo = false;
         }
         
         var canvasx = lastmousex - canvasoffsetx;
         var canvasy = lastmousey - canvasoffsety;
-        
+        /*
         for(var i = 0;i < o.v.length;i++){
             if(d(canvasx, canvasy, vs[i].x, vs[i].y) < 2){
-                ctx.fillStyle = "#AAAAFF";
-                ctx.font = '10px serif';
-                ctx.fillText("v" + i + " " + o.v[i].x.toFixed(2) + ", " + o.v[i].y.toFixed(2) + ", " + o.v[i].z.toFixed(2), canvasx + 10, canvasy + 10);
+                context.fillStyle = "#AAAAFF";
+                context.font = '10px serif';
+                context.fillText("v" + i + " " + o.v[i].x.toFixed(2) + ", " + o.v[i].y.toFixed(2) + ", " + o.v[i].z.toFixed(2), canvasx + 10, canvasy + 10);
                 showingvInfo = true;
             }
-        }
+        }*/
     }).mouseup(function(){
         lastmousex = 0;
         lastmousey = 0;
@@ -65,7 +70,7 @@ $(document).ready(function(){
         dragging = false;
     }).mousewheel(function(event) {
         camera.z += event.deltaY;
-        draw(canvas, camera, o);
+        //draw(canvas, camera, o);
     });
     
     $("#file").change(function(){
@@ -97,7 +102,7 @@ $(document).ready(function(){
             }
             
             o = new Obj(v, l, f);
-            draw(canvas, camera, o);
+            //draw(canvas, camera, o);
         };
         fr.readAsText(file);
     });

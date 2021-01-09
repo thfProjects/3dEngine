@@ -1,4 +1,6 @@
-var vs = []; //coords of vertex on screen
+var vs = new Map(); //coords of vertex on screen
+var offScreenCanvas;
+var ctx;
 
 function Obj(v, l, f){
     this.v = v;
@@ -32,12 +34,23 @@ function Camera(x, y, z, a, b, c, fov, aspect){
     this.aspect = aspect;
 }
 
-function draw(canvas, camera, obj){
-    var ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function initializeOffscreenCanvas(w, h){
+    offScreenCanvas = document.createElement('canvas');
+    offScreenCanvas.width = w;
+    offScreenCanvas.height = h;
+    
+    ctx = offScreenCanvas.getContext("2d");
     ctx.fillStyle = "white"
     ctx.strokeStyle = "white"
     ctx.lineWidth = 2;
+}
+
+function draw(canvas, camera, obj){
+    
+    console.time("draw");
+    
+    canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     var v = obj.v;
     var l = obj.l;
@@ -46,43 +59,64 @@ function draw(canvas, camera, obj){
     var xs;
     var ys;
     
-    vs = [];
+    vs.clear();;
     
     for(var i = 0; i < v.length; i++){
         move(v[i], -camera.x, -camera.y, -camera.z);
         rotate(v[i], -camera.a, -camera.b, -camera.c);
         
-        xs = canvas.width/2 * (1 + v[i].x/(v[i].z * Math.tan(camera.fov/2)));
-        ys = canvas.height/2 * (1 - v[i].y * camera.aspect/(v[i].z * Math.tan(camera.fov/2)));
+        if(v[i].z > 0){
+            xs = canvas.width/2 * (1 + v[i].x/(v[i].z * Math.tan(camera.fov/2)));
+            ys = canvas.height/2 * (1 - v[i].y * camera.aspect/(v[i].z * Math.tan(camera.fov/2)));
+            
+            vs.set(i ,{x:xs, y:ys});
+        }
         
         move(v[i], camera.x, camera.y, camera.z);
         rotate(v[i], camera.a, camera.b, camera.c);
         
         //ctx.beginPath();
         //ctx.arc(xs, ys, 2, 0, 2 * Math.PI, false);
-        //ctx.fill();
-        
-        vs.push({x:xs, y:ys});
+        //ctx.fill(); 
     }
     
     for(var i = 0; i < l.length; i++){
-        ctx.beginPath();
-        ctx.moveTo(vs[l[i].vi1].x, vs[l[i].vi1].y);
-        ctx.lineTo(vs[l[i].vi2].x, vs[l[i].vi2].y);
-        ctx.stroke();
+        if(vs.has(l[i].vi1) && vs.has(l[i].vi2)){
+            ctx.beginPath();
+            ctx.moveTo(vs.get(l[i].vi1).x, vs.get(l[i].vi1).y);
+            ctx.lineTo(vs.get(l[i].vi2).x, vs.get(l[i].vi2).y);
+            ctx.stroke();
+        }
     }
     
+    console.time("f");
+    
+    var face;
+    
     for(var i = 0; i < f.length; i++){
-        ctx.beginPath();
-        ctx.moveTo(vs[f[i].vi[f[i].vi.length-1]].x, vs[f[i].vi[f[i].vi.length-1]].y);
-        for(var j = 0; j < f[i].vi.length; j++){
-            ctx.lineTo(vs[f[i].vi[j]].x, vs[f[i].vi[j]].y);
+        face = f[i].vi;
+        
+        if(face.every(function(vi){return vs.has(vi)})){
+            ctx.beginPath();
+            ctx.moveTo(vs.get(face[face.length-1]).x, vs.get(face[face.length-1]).y);
+            for(var j = 0; j < face.length; j++){
+                ctx.lineTo(vs.get(face[j]).x, vs.get(face[j]).y);
+            }
+            ctx.save();
+            ctx.clip();
+            ctx.stroke();
+            ctx.restore();
         }
-        ctx.save();
-        ctx.clip();
-        ctx.stroke();
-        ctx.restore();
     }
+    
+    console.timeEnd("f");
+    
+    canvas.getContext("2d").putImageData(ctx.getImageData(0, 0, canvas.width, canvas.height), 0, 0);
+    console.timeEnd("draw");
+    
+    window.requestAnimationFrame(function(timestamp){
+        draw(canvas, camera, o);
+    });
 }
 
 function move(o, dx, dy, dz){
