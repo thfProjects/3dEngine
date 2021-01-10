@@ -42,7 +42,8 @@ function initializeOffscreenCanvas(w, h){
     ctx = offScreenCanvas.getContext("2d");
     ctx.fillStyle = "white"
     ctx.strokeStyle = "white"
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1;
+    ctx.lineJoin = "round";
 }
 
 function draw(canvas, camera, obj){
@@ -102,16 +103,15 @@ function draw(canvas, camera, obj){
             for(var j = 0; j < face.length; j++){
                 ctx.lineTo(vs.get(face[j]).x, vs.get(face[j]).y);
             }
-            ctx.save();
-            ctx.clip();
             ctx.stroke();
-            ctx.restore();
         }
     }
     
     console.timeEnd("f");
     
-    canvas.getContext("2d").putImageData(ctx.getImageData(0, 0, canvas.width, canvas.height), 0, 0);
+    //canvas.getContext("2d").putImageData(ctx.getImageData(0, 0, canvas.width, canvas.height), 0, 0);
+    canvas.getContext("2d").drawImage(offScreenCanvas, 0, 0);
+    
     console.timeEnd("draw");
     
     window.requestAnimationFrame(function(timestamp){
@@ -160,4 +160,13 @@ function rotateZ(o, a){
 
 function rad(a){
     return a * Math.PI/180;
+}
+
+function angleOnScreen(a, b){
+    return Math.atan((a.y - b.y)/(b.x - a.x));
+}
+
+function moveDirectionZ(o, d, a){ //-a for on screen I think
+    o.x += d * Math.cos(a);
+    o.y += d * Math.sin(a);
 }

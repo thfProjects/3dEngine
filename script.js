@@ -12,7 +12,6 @@ $(document).ready(function(){
     
     o = createCube();
     
-    //draw(canvas, camera, o);
     window.requestAnimationFrame(function(timestamp){
         draw(canvas, camera, o);
     });
@@ -37,9 +36,7 @@ $(document).ready(function(){
             for(i = 0; i < o.v.length; i++){
                 rotate(o.v[i], y/2, x/2, 0);
             }
-            //draw(canvas, camera, o);
         }
-
         
         lastmousex = event.pageX;
         lastmousey = event.pageY;
@@ -70,7 +67,6 @@ $(document).ready(function(){
         dragging = false;
     }).mousewheel(function(event) {
         camera.z += event.deltaY;
-        //draw(canvas, camera, o);
     });
     
     $("#file").change(function(){
@@ -102,7 +98,6 @@ $(document).ready(function(){
             }
             
             o = new Obj(v, l, f);
-            //draw(canvas, camera, o);
         };
         fr.readAsText(file);
     });
@@ -121,19 +116,6 @@ function createCube(){
     v.push(new Vertex(1, 1, -1)); //5
     v.push(new Vertex(-1, 1, 1)); //6
     v.push(new Vertex(1, 1, 1)); //7
-    /*
-    l.push(new Line(0, 1));
-    l.push(new Line(0, 2));
-    l.push(new Line(0, 4));
-    l.push(new Line(1, 3));
-    l.push(new Line(1, 5));
-    l.push(new Line(2, 3));
-    l.push(new Line(2, 6));
-    l.push(new Line(3, 7));
-    l.push(new Line(4, 5));
-    l.push(new Line(4, 6));
-    l.push(new Line(5, 7));
-    l.push(new Line(6, 7));*/
     
     f.push(new Face(0, 1, 3, 2));
     f.push(new Face(0, 1, 5, 4));
